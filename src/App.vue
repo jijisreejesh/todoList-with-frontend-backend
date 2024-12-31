@@ -8,113 +8,110 @@ const getItem = ref({
   id: "",
   item: "",
 });
-const retrieveAllTodos=()=>{
-  axios.get('/api/Todo/GetData')
-.then((res)=>{
-  todosArray.value=res.data;
-  // todosArray.value.sort((a,b)=>a.id-b.id)
-})
-.catch((err)=>{
-  console.log("Error : "+err);
-})     
-}
+const retrieveAllTodos = () => {
+  axios
+    .get("/api/Todo/GetData")
+    .then((res) => {
+      todosArray.value = res.data;
+      //subjects.sort((a, b) => b.score - a.score);
+      todosArray.value.sort((a, b) => a.id - a.id);
+    })
+    .catch((err) => {
+      console.log("Error : " + err);
+    });
+};
 onMounted(() => {
- retrieveAllTodos();
+  retrieveAllTodos();
 });
 const localStore = () => {
   localStorage.setItem("todosArray", JSON.stringify(todosArray.value));
 };
-const save = async(i) => {
-  try{
-  const todos = {
-    Task: "",
-    Completed: false,
-    CreatedAt:new Date(),
-    CompletedAt:null
-  };
-  todos.Task= i;
-  const res=await axios.post('/api/Todo/AddTodo',todos);
-}
-  catch(err){
-    console.log("Error : "+err);
+const save = async (i) => {
+  try {
+    const todos = {
+      Task: "",
+      Completed: false,
+      CreatedAt: new Date(),
+      CompletedAt: null,
+    };
+    todos.Task = i;
+    const res = await axios.post("/api/Todo/AddTodo", todos);
+  } catch (err) {
+    console.log("Error : " + err);
   }
   retrieveAllTodos();
 };
 
-const deleteTodoItem =async (i) => {
- try{
-  const res=await axios.delete(`/api/Todo/DeleteTask/${i}`);
-  console.log(res.data);
- }
-catch(err){
-  console.log("Error : "+err);
-}
-retrieveAllTodos();
+const deleteTodoItem = async (i) => {
+  try {
+    const res = await axios.delete(`/api/Todo/DeleteTask/${i}`);
+    console.log(res.data);
+  } catch (err) {
+    console.log("Error : " + err);
+  }
+  retrieveAllTodos();
 };
 
-const completeTodoItem =async (i) => {
-  try{
-     i.completed=true;
-     var newDate=new Date();
-     i.completedAt=newDate;
-    const res=await axios.put('/api/Todo/UpdateTodo',i);
+const completeTodoItem = async (i) => {
+  try {
+    i.completed = true;
+    var newDate = new Date();
+    i.completedAt = newDate;
+    const res = await axios.put("/api/Todo/UpdateTodo", i);
+  } catch (err) {
+    console.log("Error : ", err);
   }
-  catch(err){
-    console.log("Error : ",err);
-  }
- retrieveAllTodos();
+  retrieveAllTodos();
 };
 
-const getTodoItem =async (i) => {
-  try{
- const res=await axios.get(`/api/Todo/GetById/${i}`);
- getItem.value.id=res.data.id;
- getItem.value.item=res.data.task;
- console.log(getItem.value);
-}
-catch(err){
-  console.log("Error : ",err);
-}
+const getTodoItem = async (i) => {
+  try {
+    const res = await axios.get(`/api/Todo/GetById/${i}`);
+    getItem.value.id = res.data.id;
+    getItem.value.item = res.data.task;
+    console.log(getItem.value);
+  } catch (err) {
+    console.log("Error : ", err);
+  }
 };
 
-const updateTodoItem = async(j,i) => {
-  try{
-    const responseData=await axios.get(`/api/Todo/GetById/${i}`);
-    responseData.data.task=j;
-    const res=await axios.put('/api/Todo/UpdateTodo',responseData.data);
-    
+const updateTodoItem = async (j, i) => {
+  try {
+    const responseData = await axios.get(`/api/Todo/GetById/${i}`);
+    responseData.data.task = j;
+    const res = await axios.put("/api/Todo/UpdateTodo", responseData.data);
+  } catch (err) {
+    console.log("Error : ", err);
   }
-  catch(err){
-    console.log("Error : ",err);
-  }
- retrieveAllTodos();
+  retrieveAllTodos();
 };
 const completedTodoItem = () => {
-  axios.get('/api/Todo/GetData',{ params: { history: true} })
-.then((res)=>{
-  console.log("Success : "+res.data);
-  todosArray.value=res.data;
-  console.log(todosArray.value)
-})
-.catch((err)=>{
-  console.log("Error : "+err);
-})     
-}
-  
- 
-const allTodoItem=()=>{
- retrieveAllTodos();
-}
+  axios
+    .get("/api/Todo/GetData", { params: { history: true } })
+    .then((res) => {
+      console.log("Success : " + res.data);
+      todosArray.value = res.data;
+      console.log(todosArray.value);
+    })
+    .catch((err) => {
+      console.log("Error : " + err);
+    });
+};
+
+const allTodoItem = () => {
+  retrieveAllTodos();
+};
 const activeTodoItem = () => {
-  axios.get('/api/Todo/GetData',{ params: { history:false } })
-.then((res)=>{
-  console.log("Success : "+res.data);
-  todosArray.value=res.data;
-  console.log(todosArray.value)
-})
-.catch((err)=>{
-  console.log("Error : "+err);
-})     
+  axios
+    .get("/api/Todo/GetData", { params: { history: false } })
+    .then((res) => {
+      console.log("Success : " + res.data);
+      todosArray.value = res.data;
+      console.log(todosArray.value);
+    })
+    .catch((err) => {
+      console.log("Error : " + err);
+    });
 };
 </script>
 
@@ -132,8 +129,8 @@ const activeTodoItem = () => {
       <ul v-if="todosArray.length != 0">
         <div id="completedTodos">
           <button @click="completedTodoItem">Completed</button>
-          <button @click="allTodoItem" style="width: 60px;">All</button>
-          <button @click="activeTodoItem" style="width: 60px;">Active</button>
+          <button @click="allTodoItem" style="width: 60px">All</button>
+          <button @click="activeTodoItem" style="width: 60px">Active</button>
         </div>
         <TodoListItem
           v-for="i in todosArray"
@@ -157,11 +154,11 @@ const activeTodoItem = () => {
 body {
   background-color: rgb(5, 5, 70);
 }
-#completedTodos{
+#completedTodos {
   display: flex;
   justify-content: center;
 }
-#completedTodos button:hover{
+#completedTodos button:hover {
   background-color: red;
 }
 ul {
@@ -188,9 +185,8 @@ section {
     width: 100%;
     padding: 0px;
   }
-  #completedTodos{
-  justify-items: center;
- 
-}
+  #completedTodos {
+    justify-items: center;
+  }
 }
 </style>
