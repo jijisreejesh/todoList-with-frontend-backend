@@ -8,13 +8,13 @@ const getItem = ref({
   id: "",
   item: "",
 });
-const retrieveAllTodos = () => {
+const retrieveAllTodos = (history = null) => {
   axios
-    .get("/api/Todo/GetData")
+    .get(`/api/Todo/GetData${history !== null ? `?history=${history}` : ``}`)
     .then((res) => {
       todosArray.value = res.data;
       //subjects.sort((a, b) => b.score - a.score);
-      todosArray.value.sort((a, b) => a.id - a.id);
+     // todosArray.value.sort((a, b) => a.id - a.id);
     })
     .catch((err) => {
       console.log("Error : " + err);
@@ -52,10 +52,11 @@ const deleteTodoItem = async (i) => {
   retrieveAllTodos();
 };
 
+
 const completeTodoItem = async (i) => {
   try {
     i.completed = true;
-    var newDate = new Date();
+    let newDate = new Date();
     i.completedAt = newDate;
     const res = await axios.put("/api/Todo/UpdateTodo", i);
   } catch (err) {
@@ -86,32 +87,14 @@ const updateTodoItem = async (j, i) => {
   retrieveAllTodos();
 };
 const completedTodoItem = () => {
-  axios
-    .get("/api/Todo/GetData", { params: { history: true } })
-    .then((res) => {
-      console.log("Success : " + res.data);
-      todosArray.value = res.data;
-      console.log(todosArray.value);
-    })
-    .catch((err) => {
-      console.log("Error : " + err);
-    });
+  retrieveAllTodos(true);
 };
 
 const allTodoItem = () => {
   retrieveAllTodos();
 };
 const activeTodoItem = () => {
-  axios
-    .get("/api/Todo/GetData", { params: { history: false } })
-    .then((res) => {
-      console.log("Success : " + res.data);
-      todosArray.value = res.data;
-      console.log(todosArray.value);
-    })
-    .catch((err) => {
-      console.log("Error : " + err);
-    });
+  retrieveAllTodos(false)
 };
 </script>
 
